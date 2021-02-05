@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: d3bb8bc4f70b1be499cbab9a9a3c444a
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - tree: {fileID: 100000, guid: 92cb274b695a24c409c39f841d6bc607, type: 2}
+  - robot: {fileID: 100004, guid: 78531afb2b24a7e4db4014da38e9748b, type: 2}
+  - sentinel: {fileID: 100002, guid: 5c3a88e937bab9d4083235ae28587b50, type: 2}
+  - rock: {fileID: 100000, guid: 75d8d74dd35e3f04fb6b91e118563f59, type: 2}
+  - player: {fileID: 100002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
