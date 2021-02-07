@@ -81,17 +81,6 @@ public class ObjectManager : MonoBehaviour
         Random.InitState(((GLOBAL_SEED << 12) ^ (seed << 8) ^ (seed << 4)));
     }
   
-//	void Update()
-//	{
-//		if (Input.GetKeyDown("space"))
-//			seed++;
-//
-//		if (seed != oldSeed)
-//		{
-//			oldSeed = seed;
-//			InitialiseLevel();
-//		}
-//	}
 
 	public void SetSeed(int newSeed)
 	{
@@ -117,7 +106,6 @@ public class ObjectManager : MonoBehaviour
 	public void PopulateLevel()
 	{
 		PopulateSentinels();
-		//PopulatePlayer(); //do after sentinels because players start facing the sentinel
 		PopulateTrees();
 		PopulateRocks();
 	}
@@ -436,7 +424,32 @@ public class ObjectManager : MonoBehaviour
 
 	public void AddObject(PowerObject obj)
 	{
-		objects.Add(obj.GetInstanceID(), obj);
+		if(objects.ContainsKey(obj.GetInstanceID()) == false)
+			objects.Add(obj.GetInstanceID(), obj);
+	}
+
+	public PO_Player GetPlayer()
+    {
+		foreach(PowerObject po in objects.Values)
+        {
+			GameObject go = po.gameObject;
+			PO_Player p = go.GetComponentInChildren<PO_Player>();
+			if (p != null) return p;
+        }
+
+		return null;
+    }
+
+	public PO_Sentinel GetSenitel()
+	{
+		foreach (PowerObject po in objects.Values)
+		{
+			GameObject go = po.gameObject;
+			PO_Sentinel s = go.GetComponentInChildren<PO_Sentinel>();
+			if (s != null) return s;
+		}
+
+		return null;
 	}
 }
 

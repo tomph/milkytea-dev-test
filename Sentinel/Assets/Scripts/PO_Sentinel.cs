@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
+using UnityEngine.Events;
 
 public class PO_Sentinel : PowerObject
 {
@@ -7,6 +9,7 @@ public class PO_Sentinel : PowerObject
 	public Transform head;
 	public float headTurnRate = 10.0f;
     private Camera m_camera = null;
+
     public Camera Camera
     {
         get
@@ -32,10 +35,11 @@ public class PO_Sentinel : PowerObject
 
     public bool TestView(PowerObject powerObject)
     {
-
+		//height check
         if (!powerObject.CanAbsorb(this))
             return false;
 
+		//reassignment lock
         if (absorbTarget == powerObject || absorbTarget == null)
         {
             absorbTarget = powerObject;
@@ -77,13 +81,10 @@ public class PO_Sentinel : PowerObject
 	// Update is called once per frame
 	new void Update()
 	{
-		
 		Vector3 forward = neck.forward;
 		Vector3 right = neck.right;
 		float turnAngle = headTurnRate * Time.deltaTime;
 		Vector3 lookPos;
-
-		//lookPos = playerTransform.transform.position - neck.position;
 
 		if (forward.y != 0.0f)
 		{
@@ -92,16 +93,13 @@ public class PO_Sentinel : PowerObject
 		}
 
 		lookPos.y = 0;
-		//lookPos.Normalize();
-
-		//float angle = Mathf.Atan2(Vector3.Dot(lookPos, right), Vector3.Dot(lookPos, forward)) * Mathf.Rad2Deg;
-		///if (angle > turnAngle || angle < -turnAngle)
-			RotateHead(turnAngle);
-		//else
-		//	RotateHead(angle);
+		
+		RotateHead(turnAngle);
 
 		if (head != null)
 			Debug.DrawRay(head.position, head.forward * 5000.0f);
+
+		base.Update(); //;()
 	}
 
 	void RotateHead(float angle)
@@ -128,10 +126,9 @@ public class PO_Sentinel : PowerObject
 
     public override bool CanAbsorb(PowerObject absorber)
     {
-        if (absorber.tag != "Player")
-            return false;
-        else
-            //Only the Player can absorb the sentinel, if it is the player, normal rules apply.
+		if (absorber.tag != "Player")
+			return false;
+		else
             return base.CanAbsorb(absorber);
     }
 }

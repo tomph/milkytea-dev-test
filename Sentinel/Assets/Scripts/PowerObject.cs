@@ -1,4 +1,6 @@
+using Sentinel.Events;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 
 public class PowerObject : MonoBehaviour
@@ -11,6 +13,15 @@ public class PowerObject : MonoBehaviour
 	public float fadeOutTime = 1.0f;
     private Renderer[] renderers;
     private PO_Sentinel m_sentinel = null;
+
+	private Texture2D _baseTexture;
+	private Material _sliceMaterial;
+
+	public IntEvent ON_ABSORBED = new IntEvent();
+	public Vector3Event ON_GRID_POSITION_CHANGE = new Vector3Event();
+
+	private Vector3 _lastGridPosition = Vector3.zero;
+
     private PO_Sentinel Sentinel
     {
         get
@@ -30,16 +41,18 @@ public class PowerObject : MonoBehaviour
 	{
 		ObjectManager.instance.AddObject(this);
 
-		Texture2D tex_norm = Resources.Load("trontext") as Texture2D;
+		renderers = GetComponentsInChildren<Renderer>(true);
+
+		_baseTexture = Resources.Load("trontext") as Texture2D;
 		Texture2D tex_static = Resources.Load("static") as Texture2D;
-		Material newMat = Resources.Load("SliceMaterial", typeof(Material)) as Material;
-		newMat.SetTexture("Base (RGB)", tex_norm);
-		newMat.SetTexture("Slice Guide (RGB)", tex_static);
+		_sliceMaterial = Resources.Load("SliceMaterial", typeof(Material)) as Material;
+		_sliceMaterial.SetTexture("Base (RGB)", _baseTexture);
+		_sliceMaterial.SetTexture("Slice Guide (RGB)", tex_static);
 
 		foreach (Transform child in transform)
 		{
 			if(child.GetComponent<Renderer>())
-				child.GetComponent<Renderer>().material = newMat;
+				child.GetComponent<Renderer>().material = _sliceMaterial;
 		}
 	}
 
@@ -55,6 +68,14 @@ public class PowerObject : MonoBehaviour
 		return false;
 	}
 
+	public Vector3 gridPosition
+    {
+        get
+        {
+			return new Vector3(transform.position.x, 0, transform.position.z);
+		}
+    }
+
 	// Update is called once per frame
 	protected virtual void Update()
 	{
@@ -62,6 +83,12 @@ public class PowerObject : MonoBehaviour
 			UpdateFadeOut();
 
         UpdateAbsorb();    
+
+		if(_lastGridPosition != gridPosition)
+        {
+			ON_GRID_POSITION_CHANGE.Invoke(gridPosition);
+			_lastGridPosition = gridPosition;
+        }
     }
 
     private void UpdateAbsorb()
@@ -69,7 +96,6 @@ public class PowerObject : MonoBehaviour
         if (Sentinel == null)
             return;
 
-        renderers = GetComponentsInChildren<Renderer>(true); //TODO: optimise
         for (int i = 0; i < renderers.Length; i++)
         {
             if (renderers[i].IsVisibleFrom(Sentinel.Camera) && Sentinel.TestView(this))
@@ -94,7 +120,7 @@ public class PowerObject : MonoBehaviour
 		}
 	}
 
-	public int GetPower()
+	public virtual int GetPower()
 	{
 		return power;
 	}
@@ -127,6 +153,8 @@ public class PowerObject : MonoBehaviour
 
 	public void KillObject()
 	{
+		ON_ABSORBED.Invoke(gameObject.GetInstanceID());
+
 		ObjectManager.instance.RemoveObject(this);
 
         Destroy(this.gameObject);
@@ -135,10 +163,6 @@ public class PowerObject : MonoBehaviour
     public void SetPower(int newPower)
     {
         power = newPower;
-    }
+    }	
 
-    //public virtual void Reset()
-    //{
-    //	Destroy(this.gameObject);
-    //}
 }

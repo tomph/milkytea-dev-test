@@ -124,4 +124,11 @@ public class PadLook : MonoBehaviour {
 
         return q;
     }
+
+    private void OnDestroy()
+    {
+        //clean up cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 }

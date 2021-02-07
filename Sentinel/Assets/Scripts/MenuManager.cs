@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class MenuManager : MonoBehaviour
 	private static MenuManager s_Instance = null;
 	private bool showMenu = true;
     public bool isAR = false;
+
+	[SerializeField]
+	private GameController _gameController;
 
 	public static MenuManager instance
 	{
@@ -43,10 +47,33 @@ public class MenuManager : MonoBehaviour
 	void Start()
 	{
         menuFunction = SPLevelSelectMenu;// AnyKeyMenu;
+
+		//On Win, Generate new Level
+		_gameController.ON_GAME_WIN.AddListener(() => { InitNewGame(GenerateRandomSeed());});
+		_gameController.ON_QUIT.AddListener(OnGameQuit);
 	}
-	
-	void OnGUI()
+
+    private void OnGameQuit()
+    {
+		_gameController.Reset();
+		showMenu = true;
+    }
+
+    private int GenerateRandomSeed()
+    {
+		return UnityEngine.Random.Range(0, int.MaxValue);
+    }
+
+    private void InitNewGame(int seed)
+    {
+		_gameController.Init(seed);
+		showMenu = false;
+    }
+
+    void OnGUI()
 	{
+		_gameController.uiVisible = !showMenu;
+
 		if(!showMenu)
 			return;
 
@@ -105,10 +132,7 @@ public class MenuManager : MonoBehaviour
 
 		if (GUI.Button(new Rect((screenWidth - buttonWidth) * 0.5f, screenHeight * 0.1f + (buttonHeight * 2.0f), buttonWidth, buttonHeight), "Load Level"))
 		{
-			ObjectManager.instance.SetSeed(seed);
-			//ObjectManager.instance.PopulateLevel();
-			//ObjectManager.instance.PopulatePlayer();
-			showMenu = false;
+			InitNewGame(seed);
 		}
 	}
 
