@@ -1,0 +1,1 @@
+﻿public enum CursorState {Idle, Aiming, OutOfRange, Hitting}
