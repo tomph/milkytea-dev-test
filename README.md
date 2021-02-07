@@ -10,11 +10,11 @@ Visual Studio
 ## Controls
 
 ```
-CURSOR: KeyCode.Z
-BUILD_ROCK: KeyCode.R + LeftMouse
-BUILD_ROBOT: KeyCode.E + LeftMouse
-ABSORB: RightMouse
-POSESS: MiddleMouse
+**CURSOR**: KeyCode.Z
+**BUILD_ROCK**: KeyCode.R + LeftMouse
+**BUILD_ROBOT**: KeyCode.E + LeftMouse
+**ABSORB**: RightMouse
+**POSESS**: MiddleMouse
 ```
 
 ## Game Mechanics
